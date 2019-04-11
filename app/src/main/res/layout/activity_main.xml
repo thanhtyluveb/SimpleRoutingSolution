@@ -1,38 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <!-- UI element declaration for "Get Directions" button -->
-    <android.widget.Button
+    <Button
         android:id="@+id/directionsbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/label_button_getdirections"
-        android:onClick="getDirections" />
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="getDirections"
+        android:text="Chỉ Đường"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <SearchView
         android:id="@+id/searchview"
-        android:layout_width="match_parent"
-        android:layout_height="35dp" />
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btncancel"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </SearchView>
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="51dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/hello_world"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/mapfragment"
+        app:layout_constraintEnd_toStartOf="@id/switchlocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchview"
         tools:context=".RoutingActivity" />
 
     <fragment
         android:id="@+id/mapfragment"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        class="com.here.android.mpa.mapping.SupportMapFragment" />
+        class="com.here.android.mpa.mapping.SupportMapFragment"
+        android:layout_width="411dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
-</LinearLayout>
+    <Switch
+        android:id="@+id/switchlocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:fadingEdge="horizontal|vertical"
+        android:text="Vị Trí"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/searchview" />
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/mapfragment"
+        app:layout_constraintEnd_toEndOf="@id/mapfragment"
+        app:layout_constraintStart_toStartOf="@id/mapfragment"
+        app:layout_constraintTop_toBottomOf="@id/searchview"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-10dp"
+        tools:layout_editor_absoluteY="64dp" />
+
+    <Button
+        android:id="@+id/btncancel"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:text="x"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/directionsbutton"
+        app:layout_constraintEnd_toStartOf="@id/searchview"
+        app:layout_constraintStart_toEndOf="@id/directionsbutton"
+        app:layout_constraintTop_toTopOf="@id/directionsbutton" />
+
+
+</android.support.constraint.ConstraintLayout>
 

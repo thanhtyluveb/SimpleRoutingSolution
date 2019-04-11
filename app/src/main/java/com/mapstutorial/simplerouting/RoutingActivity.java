@@ -9,6 +9,7 @@
 package com.mapstutorial.simplerouting;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -19,6 +20,13 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,27 +47,40 @@ import com.here.android.mpa.routing.RouteManager;
 import com.here.android.mpa.routing.RouteOptions;
 import com.here.android.mpa.routing.RoutePlan;
 import com.here.android.mpa.routing.RouteResult;
+import com.here.android.mpa.search.Address;
+import com.here.android.mpa.search.AutoSuggest;
 import com.here.android.mpa.search.ErrorCode;
 import com.here.android.mpa.search.GeocodeRequest;
 import com.here.android.mpa.search.GeocodeResult;
 import com.here.android.mpa.search.Location;
 import com.here.android.mpa.search.ResultListener;
 import com.here.android.mpa.search.ReverseGeocodeRequest;
+import com.here.android.mpa.search.TextAutoSuggestionRequest;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class RoutingActivity extends FragmentActivity {
     public PositioningManager mPositioningManager;
     public PositioningManager.OnPositionChangedListener positionListener;
     private static final String LOG_TAG = RoutingActivity.class.getSimpleName();
-
+    public Switch switchlocation;
+    GeoCoordinate geoCoordinate;
+    public SearchView searchView;
+    GeoCoordinate vancouver;
+    RoutePlan routePlan;
+    ListView listViewsearch;
+    public ArrayAdapter<String> arrayAdapter;
+    ResultListener<List<GeocodeResult>> listener;
+    public ResultListener<Location> listener1;
+    public List<ViewObject> viewObjects;
     // permissions request code
     private final static int REQUEST_CODE_ASK_PERMISSIONS = 1;
-
+    ArrayList<String> listsearchresults = new ArrayList<>();
     /**
      * Permissions that need to be explicitly requested from end user.
      */
@@ -68,7 +89,7 @@ public class RoutingActivity extends FragmentActivity {
 
     // map embedded in the map fragment
     public Map map = null;
-
+    public Button routebtn;
 
     // map fragment embedded in this activity
     private SupportMapFragment mapFragment = null;
@@ -78,49 +99,144 @@ public class RoutingActivity extends FragmentActivity {
 
     // MapRoute for this activity
     private static MapRoute mapRoute = null;
+    Dialog dialog;
+    RouteManager routeManager = new RouteManager();
+    Button btnDriction;
+    Button btnLocation;
+    GeoCoordinate geoCoordinatediemden;
+    Button btncancel;
+    GeoCoordinate geoCoordinatecenter = new GeoCoordinate(21.0121, 105.775);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
+        btnDriction = findViewById(R.id.buttonchiduong);
+        btnLocation = findViewById(R.id.buttuonlocation);
+        dialog = new Dialog(this);
+        dialog.setTitle("Chỉ Đường");
+        dialog.setContentView(R.layout.dialog_direction);
+        routebtn = findViewById(R.id.directionsbutton);
+        listViewsearch = findViewById(R.id.listview);
+        searchView = findViewById(R.id.searchview);
         checkPermissions();
-        GeoCoordinate vancouver = new GeoCoordinate(49.2849, -123.1252);
-        ResultListener<List<GeocodeResult>> listener = new GeocodeListener();
-        GeocodeRequest request = new GeocodeRequest("Granville").setSearchArea(vancouver, 5000);
-        if (request.execute(listener) != ErrorCode.NONE) {
-            // Handle request error
-        }
+        vancouver = new GeoCoordinate(49.2849, -123.1252);
+//        listener = new GeocodeListener();
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                listViewsearch.setVisibility(View.GONE);
+                return false;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                routebtn.setVisibility(View.VISIBLE);
+                listViewsearch.setVisibility(View.GONE);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String newText) {
+                listViewsearch.setVisibility(View.VISIBLE);
+                routebtn.setVisibility(View.GONE);
+                GeocodeRequest request = new GeocodeRequest(newText.toLowerCase()).setSearchArea(geoCoordinatecenter, 5000);
+                request.execute(new ResultListener<List<GeocodeResult>>() {
+                    @Override
+                    public void onCompleted(List<GeocodeResult> geocodeResults, ErrorCode errorCode) {
+                        if (geocodeResults != null) {
+                            for (int i = 0; i < geocodeResults.size(); i++) {
+                                Log.d("GeocodeRequest", "" + geocodeResults.get(i).getLocation().toString());
+                                listsearchresults.addAll(Collections.singleton(geocodeResults.get(i).getLocation().toString()));
+                                Log.d("listsearchresults", "" + listsearchresults);
+
+                            }
+
+                        }
 
 
-        ResultListener<Location> listener1 = new ReverseGeocodeListener();
-        ReverseGeocodeRequest request1 = new ReverseGeocodeRequest(vancouver);
+                    }
+                });
+                arrayAdapter = new ArrayAdapter<>(getApplication(), android.R.layout.simple_list_item_1, listsearchresults);
+                listViewsearch.setAdapter(arrayAdapter);
+                arrayAdapter.getFilter().filter(newText.toLowerCase());
+
+                return false;
+            }
+
+        });
+        listViewsearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplication(),""+listsearchresults.get(position),Toast.LENGTH_LONG).show();
+
+
+            }
+        });
+
+
+        ReverseGeocodeRequest request1 = new ReverseGeocodeRequest(geoCoordinatecenter);
+        request1.execute(new ResultListener<Address>() {
+            @Override
+            public void onCompleted(Address address, ErrorCode errorCode) {
+                Log.d("ReverseGeocodeRequest", "" + address);
+            }
+        });
 
 
     }
 
-    class GeocodeListener implements ResultListener<List<GeocodeResult>> {
-        @Override
-        public void onCompleted(List<GeocodeResult> data, ErrorCode error) {
-            if (error != ErrorCode.NONE) {
 
-            } else {
-                // Process result data
-                Log.d("data", "" + data);
+    // Example request listener
+    class AutoSuggestionQueryListener implements ResultListener<List<AutoSuggest>> {
+
+        @Override
+        public void onCompleted(List<AutoSuggest> data, ErrorCode error) {
+            for (AutoSuggest r : data) {
+                try {
+                    String term = "rest";
+                    TextAutoSuggestionRequest request = null;
+                    request = new TextAutoSuggestionRequest(term).setSearchCenter(map.getCenter());
+                    if (request.execute(new AutoSuggestionQueryListener()) !=
+                            ErrorCode.NONE) {
+                        //Handle request error
+                        //...
+                    }
+                } catch (IllegalArgumentException ex) {
+                    //Handle invalid create search request parameters
+                }
             }
         }
     }
 
 
-    class ReverseGeocodeListener implements ResultListener<Location> {
-        @Override
-        public void onCompleted(Location data, ErrorCode error) {
-            if (error != ErrorCode.NONE) {
-                // Handle error
-            } else {
-                // Process result data
-            }
-        }
-    }
+//    class GeocodeListener implements ResultListener<List<GeocodeResult>> {
+//        @Override
+//        public void onCompleted(List<GeocodeResult> data, ErrorCode error) {
+//            if (error != ErrorCode.NONE) {
+//                Log.d("data", "" + data.size());
+//
+//            } else {
+//                // Process result data
+//                Log.d("data", "" + data);
+//            }
+//        }
+//    }
+
+
+//    class ReverseGeocodeListener implements ResultListener<Location> {
+//        @Override
+//        public void onCompleted(Location data, ErrorCode error) {
+//            if (error != ErrorCode.NONE) {
+//                // Handle error
+//            } else {
+//                Log.d("ReverseGeocodeListener", "" + data);
+//            }
+//        }
+//    }
 
     private SupportMapFragment getSupportMapFragment() {
         return (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapfragment);
@@ -128,7 +244,6 @@ public class RoutingActivity extends FragmentActivity {
 
 
     private void initialize() {
-        setContentView(R.layout.activity_main);
         // Search for the map fragment to finish setup by calling init().
         mapFragment = getSupportMapFragment();
         mapFragment.setRetainInstance(true);
@@ -140,9 +255,8 @@ public class RoutingActivity extends FragmentActivity {
                     // retrieve a reference of the map from the map fragment
                     map = mapFragment.getMap();
 
-                    // Set the map center coordinate to the Vancouver region (no animation)
-                    map.setCenter(new GeoCoordinate(49.196261, -123.004773, 0.0),
-                            Map.Animation.NONE);
+                    // Set the map center coordinate to the VietNAm region (no animation)
+                    map.setCenter(geoCoordinatecenter, Map.Animation.NONE);
                     // Set the map zoom level to the average between min and max (no animation)
                     map.setZoomLevel((map.getMaxZoomLevel() + map.getMinZoomLevel()) / 2);
 
@@ -171,6 +285,7 @@ public class RoutingActivity extends FragmentActivity {
 
                 });
 
+
 // add listener for map gesture
                 mapFragment.getMapGesture().addOnGestureListener(new MapGesture.OnGestureListener() {
                     @Override
@@ -180,6 +295,7 @@ public class RoutingActivity extends FragmentActivity {
 
                     @Override
                     public void onPanEnd() {
+                        Toast.makeText(getApplication(), "onPanEnd", Toast.LENGTH_LONG).show();
 
                     }
 
@@ -195,18 +311,21 @@ public class RoutingActivity extends FragmentActivity {
 
                     @Override
                     public boolean onMapObjectsSelected(List<ViewObject> list) {
+//                        viewObjects.addAll(list);
+                        Log.d("onMapObjectsSelected", "list" + list.size());
+                        Toast.makeText(getApplication(), "onMapObjectsSelected", Toast.LENGTH_LONG).show();
                         return false;
                     }
 
                     @Override
                     public boolean onTapEvent(PointF pointF) {
-                        Toast.makeText(getApplication(), "ontapevent" + pointF, Toast.LENGTH_LONG).show();
 
                         return false;
                     }
 
                     @Override
                     public boolean onDoubleTapEvent(PointF pointF) {
+
                         return false;
                     }
 
@@ -237,16 +356,36 @@ public class RoutingActivity extends FragmentActivity {
 
                     @Override
                     public boolean onLongPressEvent(PointF pointF) {
+                        if (geoCoordinate != null) {
+                            geoCoordinatediemden = map.pixelToGeo(pointF);
+                            makeMapMarker(geoCoordinatediemden);
+
+                            Toast.makeText(getApplication(), "geoCoordinatediemden" + geoCoordinatediemden, Toast.LENGTH_LONG).show();
+
+                        } else {
+                            geoCoordinate = map.pixelToGeo(pointF);
+                            makeMapMarker(geoCoordinate);
+
+                            Toast.makeText(getApplication(), "geoCoordinate" + geoCoordinate, Toast.LENGTH_LONG).show();
+
+
+                        }
+
+
                         return false;
                     }
 
                     @Override
                     public void onLongPressRelease() {
-
+//                        if (routePlan != null) {
+//                            routePlan.removeAllWaypoints();
+//                        }
+                        routebtn.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public boolean onTwoFingerTapEvent(PointF pointF) {
+
                         return false;
                     }
                 });
@@ -267,16 +406,28 @@ public class RoutingActivity extends FragmentActivity {
 
                 mapFragment.getMapGesture();
 
+                switchlocation = findViewById(R.id.switchlocation);
+                switchlocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (switchlocation.isChecked()) {
+                            testPosition();
+                            Toast.makeText(getApplication(), "checked", Toast.LENGTH_LONG).show();
+                        } else {
+                            if (mPositioningManager != null) {
+                                mPositioningManager.removeListener(positionListener);
+                            }
 
-                testPosition();
+
+                        }
+                    }
+                });
 
 
-                MapMarker mapMarker = new MapMarker();
-                mapMarker.setDraggable(true);
             }
         });
 
-
+//        makeMapMarker();
         textViewResult = (TextView) findViewById(R.id.title);
         textViewResult.setText(R.string.textview_routecoordinates_2waypoints);
     }
@@ -288,51 +439,43 @@ public class RoutingActivity extends FragmentActivity {
         mPositioningManager.start(PositioningManager.LocationMethod.GPS);
         mPositioningManager.getLocationStatus(PositioningManager.LocationMethod.GPS);
         mPositioningManager.getPosition();
-
-
         positionListener = new
                 PositioningManager.OnPositionChangedListener() {
-
                     public void onPositionUpdated(PositioningManager.LocationMethod method,
                                                   GeoPosition position, boolean isMapMatched) {
                         // set the center only when the app is in the foreground
                         // to reduce CPU consumption
-
                         map.setCenter(position.getCoordinate(),
-                                Map.Animation.LINEAR);
-
+                                Map.Animation.NONE);
+//                        Toast.makeText(getApplication(),"position"+position.getCoordinate(),Toast.LENGTH_LONG).show();
                     }
 
                     public void onPositionFixChanged(PositioningManager.LocationMethod method,
                                                      PositioningManager.LocationStatus status) {
                     }
-
-
                 };
         // Register positioning listener
-
         mPositioningManager.addListener(new WeakReference<PositioningManager.OnPositionChangedListener>(positionListener));
-
 
     }
 
-    private void makeMapMarker() {
+    private void makeMapMarker(GeoCoordinate geoCoordinate) {
 
 // Create a custom marker image
         com.here.android.mpa.common.Image myImage =
                 new com.here.android.mpa.common.Image();
 
         try {
-            myImage.setImageResource(R.drawable.mapmarker);
+            myImage.setImageResource(R.drawable.mapmarker11);
         } catch (IOException e) {
             finish();
         }
 
 // Create the MapMarker
         MapMarker myMapMarker =
-                new MapMarker(new GeoCoordinate(49.1966286, -123.0053635), myImage);
-
+                new MapMarker(geoCoordinate, myImage);
         map.addMapObject(myMapMarker);
+        myMapMarker.setDraggable(true);
 
 
 // Create a gesture listener and add it to the SupportMapFragment
@@ -348,6 +491,7 @@ public class RoutingActivity extends FragmentActivity {
                                     // (like change the visibility, or more
                                     // marker-specific actions)
                                     ((MapObject) viewObj).setVisible(false);
+
                                 }
                             }
                         }
@@ -356,58 +500,6 @@ public class RoutingActivity extends FragmentActivity {
                     }
                 };
 
-    }
-
-
-    /**
-     * Checks the dynamically controlled permissions and requests missing permissions from end user.
-     */
-    protected void checkPermissions() {
-        final List<String> missingPermissions = new ArrayList<String>();
-        // check all required dynamic permissions
-        for (final String permission : REQUIRED_SDK_PERMISSIONS) {
-            final int result = ContextCompat.checkSelfPermission(this, permission);
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                missingPermissions.add(permission);
-            }
-        }
-        if (!missingPermissions.isEmpty()) {
-            // request all missing permissions
-            final String[] permissions = missingPermissions
-                    .toArray(new String[missingPermissions.size()]);
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_ASK_PERMISSIONS);
-        } else {
-            final int[] grantResults = new int[REQUIRED_SDK_PERMISSIONS.length];
-            Arrays.fill(grantResults, PackageManager.PERMISSION_GRANTED);
-            onRequestPermissionsResult(REQUEST_CODE_ASK_PERMISSIONS, REQUIRED_SDK_PERMISSIONS,
-                    grantResults);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS:
-                for (int index = permissions.length - 1; index >= 0; --index) {
-                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) {
-                        // exit the app if one permission is not granted
-                        Toast.makeText(this, "Required permission '" + permissions[index]
-                                + "' not granted, exiting", Toast.LENGTH_LONG).show();
-                        finish();
-                        return;
-                    }
-                }
-                // all permissions were granted
-                initialize();
-                break;
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_routing, menu);
-        return true;
     }
 
 
@@ -421,9 +513,9 @@ public class RoutingActivity extends FragmentActivity {
         }
 
         // 2. Initialize RouteManager
-        RouteManager routeManager = new RouteManager();
+
         // 3. Select routing options
-        RoutePlan routePlan = new RoutePlan();
+        routePlan = new RoutePlan();
 
         RouteOptions routeOptions = new RouteOptions();
         routeOptions.setTransportMode(RouteOptions.TransportMode.CAR);
@@ -431,24 +523,34 @@ public class RoutingActivity extends FragmentActivity {
         routePlan.setRouteOptions(routeOptions);
 
         // 4. Select Waypoints for your routes
-        // START: Nokia, Burnaby
+        // 1st point
+//        dialog.show();
+        routePlan.addWaypoint(geoCoordinate);
 
-        routePlan.addWaypoint(new GeoCoordinate(49.1966286, -123.0053635));
-
-        // END: Airport, YVR
-        routePlan.addWaypoint(new GeoCoordinate(49.1947289, -123.1762924));
+        if (geoCoordinatediemden != null) {
+            routePlan.addWaypoint(geoCoordinatediemden);
+            routeManager.calculateRoute(routePlan, routeManagerListener);
+        }
+//
+//        // END: Airport, YVR
 
         // 5. Retrieve Routing information via RouteManagerEventListener
-        RouteManager.Error error = routeManager.calculateRoute(routePlan, routeManagerListener);
+//        RouteManager.Error error = routeManager.calculateRoute(routePlan, routeManagerListener);
+//
+//
+//        if (error != RouteManager.Error.NONE) {
+//            Toast.makeText(getApplicationContext(),
+//                    "Route calculation failed with: " + error.toString(), Toast.LENGTH_SHORT)
+//                    .show();
+//        }
+
+    }
+
+    public void chonDiemDen(View view) {
+
+        dialog.cancel();
 
 
-        if (error != RouteManager.Error.NONE) {
-            Toast.makeText(getApplicationContext(),
-                    "Route calculation failed with: " + error.toString(), Toast.LENGTH_SHORT)
-                    .show();
-        }
-
-        routeManager.calculateRoute(routePlan, new RouteListener());
     }
 
     private RouteManager.Listener routeManagerListener = new RouteManager.Listener() {
@@ -459,7 +561,6 @@ public class RoutingActivity extends FragmentActivity {
                 // create a map route object and place it on the map
                 mapRoute = new MapRoute(result.get(0).getRoute());
                 map.addMapObject(mapRoute);
-
                 // Get the bounding box containing the route and zoom in (no animation)
                 GeoBoundingBox gbb = result.get(0).getRoute().getBoundingBox();
                 map.zoomTo(gbb, Map.Animation.NONE, Map.MOVE_PRESERVE_ORIENTATION);
@@ -530,5 +631,55 @@ public class RoutingActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * Checks the dynamically controlled permissions and requests missing permissions from end user.
+     */
+    protected void checkPermissions() {
+        final List<String> missingPermissions = new ArrayList<String>();
+        // check all required dynamic permissions
+        for (final String permission : REQUIRED_SDK_PERMISSIONS) {
+            final int result = ContextCompat.checkSelfPermission(this, permission);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                missingPermissions.add(permission);
+            }
+        }
+        if (!missingPermissions.isEmpty()) {
+            // request all missing permissions
+            final String[] permissions = missingPermissions
+                    .toArray(new String[missingPermissions.size()]);
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_ASK_PERMISSIONS);
+        } else {
+            final int[] grantResults = new int[REQUIRED_SDK_PERMISSIONS.length];
+            Arrays.fill(grantResults, PackageManager.PERMISSION_GRANTED);
+            onRequestPermissionsResult(REQUEST_CODE_ASK_PERMISSIONS, REQUIRED_SDK_PERMISSIONS,
+                    grantResults);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                for (int index = permissions.length - 1; index >= 0; --index) {
+                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) {
+                        // exit the app if one permission is not granted
+                        Toast.makeText(this, "Required permission '" + permissions[index]
+                                + "' not granted, exiting", Toast.LENGTH_LONG).show();
+                        finish();
+                        return;
+                    }
+                }
+                // all permissions were granted
+                initialize();
+                break;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_routing, menu);
+        return true;
+    }
 
 }
