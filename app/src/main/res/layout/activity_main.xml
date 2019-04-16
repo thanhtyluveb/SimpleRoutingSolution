@@ -73,10 +73,11 @@
         app:layout_constraintStart_toEndOf="@+id/title"
         app:layout_constraintTop_toBottomOf="@+id/searchview" />
 
-    <ListView
-        android:id="@+id/listview"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="#464CAF50"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/mapfragment"
         app:layout_constraintEnd_toEndOf="@id/mapfragment"
@@ -87,6 +88,7 @@
         tools:layout_editor_absoluteY="64dp" />
 
     <Button
+        android:onClick="clearpreviousresults"
         android:id="@+id/btncancel"
         android:layout_width="30dp"
         android:layout_height="wrap_content"

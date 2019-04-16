@@ -7,4 +7,6 @@
     <string name="label_button_getdirections">Get Directions</string>
     <string name="textview_routecoordinates_2waypoints">Press "Get Directions" button to calculate a route:\nStart: Nokia, Burnaby\nEnd: Airport, YVR</string>
     <string name="normal_day">NORMAL_DAY</string>
+    <string name="address">Address</string>
+    <string name="addressdigital">AddressDigital</string>
 </resources>

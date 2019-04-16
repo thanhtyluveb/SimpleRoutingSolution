@@ -38,6 +38,9 @@ MERGED from [android.arch.lifecycle:livedata:1.1.1] C:\Users\Ngoc\.gradle\caches
 MERGED from [android.arch.lifecycle:livedata-core:1.1.1] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\livedata-core-1.1.1.aar\adbd6b29641584099918f40c7fd474ac\AndroidManifest.xml:17:1-22:12
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\f4e30b553a530c01e382f1affaeee052\AndroidManifest.xml:17:1-22:12
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\836a4fbb4cafbb66dcfd172b301295ae\AndroidManifest.xml:2:1-11:12
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\lifecycle-livedata-2.0.0.aar\8b4b2c6d9c943c0d9d0f55f1087d8a70\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\lifecycle-livedata-core-2.0.0.aar\950d799b9350b7d0b5a5ff4a7b105c10\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.arch.core:core-runtime:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\core-runtime-2.0.0.aar\95ca51ee9db97ad230ce99ad7b86bef4\AndroidManifest.xml:17:1-22:12
 INJECTED from F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\src\main\AndroidManifest.xml:2:1-32:12
 INJECTED from F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\src\main\AndroidManifest.xml:2:1-32:12
 INJECTED from F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\src\main\AndroidManifest.xml:2:1-32:12
@@ -195,6 +198,12 @@ MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ngoc\.gradle\caches\trans
 MERGED from [android.arch.core:runtime:1.1.1] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\runtime-1.1.1.aar\f4e30b553a530c01e382f1affaeee052\AndroidManifest.xml:20:5-44
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\836a4fbb4cafbb66dcfd172b301295ae\AndroidManifest.xml:5:5-7:41
 MERGED from [com.android.support.constraint:constraint-layout:1.1.3] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\constraint-layout-1.1.3.aar\836a4fbb4cafbb66dcfd172b301295ae\AndroidManifest.xml:5:5-7:41
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\lifecycle-livedata-2.0.0.aar\8b4b2c6d9c943c0d9d0f55f1087d8a70\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\lifecycle-livedata-2.0.0.aar\8b4b2c6d9c943c0d9d0f55f1087d8a70\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\lifecycle-livedata-core-2.0.0.aar\950d799b9350b7d0b5a5ff4a7b105c10\AndroidManifest.xml:20:5-44
+MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\lifecycle-livedata-core-2.0.0.aar\950d799b9350b7d0b5a5ff4a7b105c10\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\core-runtime-2.0.0.aar\95ca51ee9db97ad230ce99ad7b86bef4\AndroidManifest.xml:20:5-44
+MERGED from [androidx.arch.core:core-runtime:2.0.0] C:\Users\Ngoc\.gradle\caches\transforms-1\files-1.1\core-runtime-2.0.0.aar\95ca51ee9db97ad230ce99ad7b86bef4\AndroidManifest.xml:20:5-44
 INJECTED from F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\src\main\AndroidManifest.xml
 INJECTED from F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\src\main\AndroidManifest.xml
 	android:targetSdkVersion

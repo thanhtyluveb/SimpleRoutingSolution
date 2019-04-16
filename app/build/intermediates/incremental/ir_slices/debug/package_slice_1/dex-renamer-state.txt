@@ -1,4 +1,4 @@
-#Thu Apr 11 15:57:32 ICT 2019
+#Tue Apr 16 13:12:48 ICT 2019
 base.0=F\:\\LifeTimeProjects\\Heremapdemo\\HERE-sdk\\tutorial\\SimpleRoutingSolution\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\1
 path.0=classes.dex
 renamed.0=classes.dex
