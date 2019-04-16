@@ -5,28 +5,23 @@
     build-mode="COLD"
     density="560dpi"
     format="10"
-    ir-eligibility="COMPATIBLE"
     plugin-version="3.3.2"
-    timestamp="1555395158619"
+    timestamp="1555395903494"
     token="-6209005592202462407"
     verifier="COLD_SWAP_REQUESTED" >
 
     <task
         name="javac"
-        duration="6412" />
+        duration="0" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="400" />
+        duration="0" />
     <task
         name="verifier"
-        duration="180" />
-
-    <artifact
-        location="F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
-        type="SPLIT" />
+        duration="0" />
 
     <build
         build-mode="FULL"
@@ -89,5 +84,9 @@
             location="F:\LifeTimeProjects\Heremapdemo\HERE-sdk\tutorial\SimpleRoutingSolution\app\build\intermediates\split-apk\debug\slices\slice_1.apk"
             type="SPLIT" />
     </build>
+    <build
+        build-mode="COLD"
+        timestamp="1555395903494"
+        verifier="COLD_SWAP_REQUESTED" />
 
 </instant-run>
